@@ -1,5 +1,12 @@
-import db from '../../db/index.js';
+import db from "../../db/index.js";
+import bcryptjs from "bcryptjs";
 
 export const addUser = async (payload) => {
-  return db('users').insert(payload).returning('*');
+  const hashedPassword = await bcryptjs.hash(payload.password, 10);
+
+  const result = await db("users")
+    .insert({ ...payload, password: hashedPassword })
+    .returning("*");
+
+  return result[0];
 };
